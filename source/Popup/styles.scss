@@ -5,49 +5,40 @@
 body {
   color: $black;
   background-color: $greyWhite;
+  font-size: 10px;
 }
-
 
 #popup {
   min-width: 350px;
-  padding: 30px 20px;
+  padding: 10px 20px;
 
-  h2 {
-    font-size: 25px;
-    text-align: center;
+  .main-title {
+    font-size: 1.6rem;
   }
 
-  #options__button {
-    width: 50%;
-    background: green;
+  .field-set {
+    display: grid;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: .7rem;
+
+    input {
+      padding: 0 .5em;
+    }
+  }
+
+  .button {
+    min-width: 100px;
+    background: rgb(0, 84, 147);
     color: white;
-    font-weight: 500;
-    border-radius: 15px;
+    border-radius: 4px;
     padding: 5px 10px;
     justify-content: center;
     margin: 20px auto;
     cursor: pointer;
-    opacity: 0.8;
-    display: flex;
   }
 
-  .links__holder {
-    ul {
-      display: flex;
-      margin-top: 1em;
-      justify-content: space-around;
-
-      li {
-        button {
-          border-radius: 25px;
-          font-size: 20px;
-          font-weight: 600;
-          padding: 10px 17px;
-          background-color: rgba(0, 0, 255, 0.7);
-          color: white;
-          cursor: pointer;
-        }
-      }
-    }
+  .text-mono {
+    font-family: monospace;
   }
 }
