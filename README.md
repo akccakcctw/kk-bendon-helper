@@ -75,7 +75,7 @@ Please file an issue [here](https://github.com/akccakcctw/kk-bendon-helper/issue
 
 ## License
 
-[MIT © Rex Tsou](https://github.com/akccakcctw/kk-bendon-helper/blob/master/LICENSE)
+[MIT © Rex Tsou](https://github.com/akccakcctw/kk-bendon-helper/blob/main/LICENSE)
 
 ## Thanks
 
