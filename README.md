@@ -20,30 +20,30 @@
 Ensure you have
 
 - [Node.js](https://nodejs.org) 10 or later installed
-- [NPM](https://www.npmjs.com/)
+- [pnpm](https://pnpm.io/)
 
 Then run the following:
 
-- `npm install` to install dependencies.
-- `npm run dev:chrome` to start the development server for chrome extension
-- `npm run dev:firefox` to start the development server for firefox addon
-- `npm run dev:opera` to start the development server for opera extension
-- `npm run build:chrome` to build chrome extension
-- `npm run build:firefox` to build firefox addon
-- `npm run build:opera` to build opera extension
-- `npm run build` builds and packs extensions all at once to extension/ directory
+- `pnpm install` to install dependencies.
+- `pnpm dev:chrome` to start the development server for chrome extension
+- `pnpm dev:firefox` to start the development server for firefox addon
+- `pnpm dev:opera` to start the development server for opera extension
+- `pnpm build:chrome` to build chrome extension
+- `pnpm build:firefox` to build firefox addon
+- `pnpm build:opera` to build opera extension
+- `pnpm build` builds and packs extensions all at once to extension/ directory
 
 ### Development
 
-- `npm install` to install dependencies.
+- `pnpm install` to install dependencies.
 - To watch file changes in development
 
   - Chrome
-    - `npm run dev:chrome`
+    - `pnpm dev:chrome`
   - Firefox
-    - `npm run dev:firefox`
+    - `pnpm dev:firefox`
   - Opera
-    - `npm run dev:opera`
+    - `pnpm dev:opera`
 
 - **Load extension in browser**
 
@@ -66,7 +66,7 @@ Then run the following:
 
 ### Production
 
-- `npm run build` builds the extension for all the browsers to `extension/BROWSER` directory respectively.
+- `pnpm build` builds the extension for all the browsers to `extension/BROWSER` directory respectively.
 
 Note: By default the `manifest.json` is set with version `0.0.0`. The webpack loader will update the version in the build with that of the `package.json` version. In order to release a new version, update version in `package.json` and run script.
 
