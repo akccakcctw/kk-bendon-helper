@@ -1,5 +1,9 @@
-{
-  "branches": ["main"],
+export default {
+  "branches": [
+    "main",
+		{ name: 'rc', prerelease: true }
+  ],
+	"preset": 'conventionalcommits',
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
@@ -30,11 +34,11 @@
       {
         "assets": [
           "package.json",
-          "package-lock.json",
+          "pnpm-lock.yaml",
           "CHANGELOG.md"
         ],
         "message": "chore(release): ${nextRelease.version} [skip ci]"
       }
     ]
   ]
-}
+};
