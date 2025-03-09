@@ -172,7 +172,12 @@ export default {
     }),
     new MiniCssExtractPlugin({filename: 'css/[name].css'}),
     new CopyWebpackPlugin({
-      patterns: [{from: 'source/assets', to: 'assets'}],
+      patterns: [
+        {
+          from: 'source/assets',
+          to: 'assets',
+        },
+      ],
     }),
     // plugin to enable browser reloading in development mode
     extensionReloaderPlugin,

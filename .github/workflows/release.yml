@@ -33,9 +33,6 @@ jobs:
       - name: Lint
         run: pnpm run lint
 
-      - name: Build
-        run: pnpm run build
-
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -46,5 +43,6 @@ jobs:
           --package="@semantic-release/git"
           --package="@semantic-release/github"
           --package="@semantic-release/release-notes-generator"
+          --package="@semantic-release/exec"
           --package="semantic-release@21"
           dlx semantic-release
