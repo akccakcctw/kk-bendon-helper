@@ -12,7 +12,6 @@ jobs:
     strategy:
       matrix:
         node-version: [22]
-        pnpm-version: [10]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,10 +19,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           submodules: recursive
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ matrix.pnpm-version }}
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
