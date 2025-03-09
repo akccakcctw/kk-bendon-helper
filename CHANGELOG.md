@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/akccakcctw/kk-bendon-helper/compare/v2.0.0...v2.0.1) (2025-03-09)
+
+
+### Bug Fixes
+
+* automatic release actions ([e1707c4](https://github.com/akccakcctw/kk-bendon-helper/commit/e1707c494ec03a5583163740f84fef313b5e1604))
+
 ## [2.0.0](https://github.com/akccakcctw/kk-bendon-helper/compare/v1.0.0...v2.0.0) (2025-03-09)
 
 
