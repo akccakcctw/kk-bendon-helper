@@ -91,10 +91,10 @@ const Popup: React.FC = () => {
       <h2 className="main-title">訂便當小幫手</h2>
       <ul>
         <li>
-          <span className="text-mono">version: v1.0.0</span>
+          <span className="text-mono">version: v{process.env.VERSION}</span>
         </li>
         <li>
-          <span className="text-mono">author: Rex Tsou</span>
+          <span className="text-mono">author: {process.env.AUTHOR}</span>
         </li>
       </ul>
       <button

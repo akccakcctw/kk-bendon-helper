@@ -11,6 +11,7 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import WextManifestWebpackPlugin from 'wext-manifest-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
+import packageJson from './package.json' with { type: 'json' };
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -140,6 +141,10 @@ export default {
   },
 
   plugins: [
+    new webpack.DefinePlugin({
+      'process.env.VERSION': JSON.stringify(packageJson.version),
+      'process.env.AUTHOR': JSON.stringify(packageJson.author.name),
+    }),
     // Plugin to not generate js bundle for manifest entry
     new WextManifestWebpackPlugin(),
     new webpack.SourceMapDevToolPlugin({filename: false}),
