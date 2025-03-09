@@ -1,6 +1,10 @@
-import * as React from 'react';
-import ReactDOM from 'react-dom';
-
+import { createRoot } from 'react-dom/client';
 import Popup from './Popup';
 
-ReactDOM.render(<Popup />, document.getElementById('popup-root'));
+const rootElement = document.getElementById('popup-root');
+
+if(!rootElement) {
+  throw new Error('dom node not found');
+}
+
+createRoot(rootElement).render(<Popup />);
