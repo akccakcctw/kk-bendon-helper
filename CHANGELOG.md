@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/akccakcctw/kk-bendon-helper/compare/v2.0.1...v2.0.2) (2025-03-09)
+
+
+### Bug Fixes
+
+* Popup.tsx auto update version & author name ([c608b87](https://github.com/akccakcctw/kk-bendon-helper/commit/c608b87eacfc1a72c11314b231673c3c8b9698a2))
+
 ## [2.0.1](https://github.com/akccakcctw/kk-bendon-helper/compare/v2.0.0...v2.0.1) (2025-03-09)
 
 
