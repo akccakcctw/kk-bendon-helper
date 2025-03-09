@@ -9,36 +9,46 @@ jobs:
     name: Release
     environment: release
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22]
+        pnpm-version: [10]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           submodules: recursive
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: '16'
-          cache: 'npm'
+          version: ${{ matrix.pnpm-version }}
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
 
       - name: Install Dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: npm run lint:fix
+        run: pnpm run lint:fix
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
-          npx
-          -p @semantic-release/changelog
-          -p @semantic-release/git
-          -p @semantic-release/github
-          -p @semantic-release/release-notes-generator
-          -p semantic-release
-          semantic-release
+          pnpm
+          --package="conventional-changelog-conventionalcommits@6"
+          --package="@semantic-release/changelog"
+          --package="@semantic-release/git"
+          --package="@semantic-release/github"
+          --package="@semantic-release/release-notes-generator"
+          --package="semantic-release@21"
+          dlx semantic-release
