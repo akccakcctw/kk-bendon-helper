@@ -1,3 +1,10 @@
+## [2.0.4](https://github.com/akccakcctw/kk-bendon-helper/compare/v2.0.3...v2.0.4) (2025-08-06)
+
+
+### Bug Fixes
+
+* 讓欄位資訊可以正常帶入 input 框，並且被 react 吃到 ([#7](https://github.com/akccakcctw/kk-bendon-helper/issues/7)) ([dc60823](https://github.com/akccakcctw/kk-bendon-helper/commit/dc608231af196adfaa4870e7984e15b1775ff455)), closes [#6](https://github.com/akccakcctw/kk-bendon-helper/issues/6)
+
 ## [2.0.3](https://github.com/akccakcctw/kk-bendon-helper/compare/v2.0.2...v2.0.3) (2025-03-19)
 
 
