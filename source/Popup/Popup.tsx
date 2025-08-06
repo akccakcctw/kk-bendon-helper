@@ -21,11 +21,7 @@ function handleFillFields(fields: BenDonFields): void {
         action: 'fill_form',
         data: fields,
       }).then(response => {
-        if (browser.runtime.lastError) {
-          console.error(browser.runtime.lastError);
-        } else {
-          console.log('Response from content script:', response);
-        }
+        console.log('Response from content script:', response);
       }).catch(error => {
         console.error('Error sending message to content script:', error);
         // This can happen if the content script is not yet injected.
