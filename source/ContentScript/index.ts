@@ -22,9 +22,9 @@ interface FillFormRequest {
 }
 
 // Listen for messages from the popup or background script
-browser.runtime.onMessage.addListener((request: any, _sender: browser.Runtime.MessageSender) => {
+browser.runtime.onMessage.addListener((request: unknown, _sender: browser.Runtime.MessageSender) => {
   // Type guard to ensure the request is the one we expect
-  if (request && request.action === 'fill_form') {
+  if (typeof request === 'object' && request !== null && 'action' in request && request.action === 'fill_form') {
     const fillRequest = request as FillFormRequest;
     console.log('Received fill_form request', fillRequest.data);
 
