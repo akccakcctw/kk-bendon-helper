@@ -1,5 +1,5 @@
 import * as React from 'react';
-import browser, {type Tabs} from 'webextension-polyfill';
+import browser, { type Tabs } from 'webextension-polyfill';
 
 import './styles.scss';
 
@@ -17,54 +17,23 @@ function handleFillFields(fields: BenDonFields): void {
   browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
     const activeTab = tabs[0];
     if (activeTab?.id) {
-      browser.scripting.executeScript({
-        target: { tabId: activeTab.id },
-        func: (fields: BenDonFields) => {
-          const { lastname, email, slackId, staffId } = fields;
-
-          function getInputElement(query: string): HTMLInputElement | null {
-            const element = document.querySelector(query);
-            return element instanceof HTMLInputElement ? element : null;
-          }
-
-          function getInputElementList(query: string): HTMLInputElement[] {
-            return Array.from(document.querySelectorAll(query)).filter(
-              (el): el is HTMLInputElement => el instanceof HTMLInputElement
-            );
-          }
-
-          // Last Name
-          const lastNameInput = getInputElement('input[autocomplete="family-name"]');
-          if (lastNameInput) {
-            lastNameInput.value = lastname;
-          }
-
-          // Email
-          const emailInput = getInputElement('input[autocomplete="email"]');
-          if (emailInput) {
-            emailInput.value = email;
-          }
-
-          // Slack ID
-          const slackIdInputList = getInputElementList(
-            'input[id*="e873c5e4-eb8e-4029-8efe-20cb83071f41"], input[name*="e873c5e4-eb8e-4029-8efe-20cb83071f41"]'
-          );
-          slackIdInputList.forEach((input) => (input.value = slackId));
-
-          // Staff ID
-          const staffIdInputList = getInputElementList(
-            'input[id*="d111470c-31c7-4280-89d6-acf60e38f53e"], input[name*="d111470c-31c7-4280-89d6-acf60e38f53e"]'
-          );
-          staffIdInputList.forEach((input) => (input.value = staffId));
-        },
-        args: [fields],
+      browser.tabs.sendMessage(activeTab.id, {
+        action: 'fill_form',
+        data: fields,
+      }).then(response => {
+        console.log('Response from content script:', response);
+      }).catch(error => {
+        console.error('Error sending message to content script:', error);
+        // This can happen if the content script is not yet injected.
+        // You might want to alert the user or implement a retry mechanism.
+        alert('Could not connect to the content script. Please refresh the page and try again.');
       });
     }
   });
 }
 
 function openWebPage(url: string): Promise<Tabs.Tab> {
-  return browser.tabs.create({url});
+  return browser.tabs.create({ url });
 }
 
 const Popup: React.FC = () => {
@@ -114,7 +83,7 @@ const Popup: React.FC = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
               const val = e.currentTarget.value;
               setLastname(val);
-              browser.storage.local.set({lastname: val});
+              browser.storage.local.set({ lastname: val });
             }}
             value={lastname}
             name="lastname"
@@ -127,7 +96,7 @@ const Popup: React.FC = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
               const text = e.currentTarget.value;
               setEmail(text);
-              browser.storage.local.set({email: text});
+              browser.storage.local.set({ email: text });
             }}
             value={email}
             name="email"
@@ -140,7 +109,7 @@ const Popup: React.FC = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
               const val = e.currentTarget.value;
               setSlackId(val);
-              browser.storage.local.set({slackId: val});
+              browser.storage.local.set({ slackId: val });
             }}
             value={slackId}
             name="slack-id"
@@ -153,7 +122,7 @@ const Popup: React.FC = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
               const val = e.currentTarget.value;
               setStaffId(val);
-              browser.storage.local.set({staffId: val});
+              browser.storage.local.set({ staffId: val });
             }}
             value={staffId}
             name="staff-id"
