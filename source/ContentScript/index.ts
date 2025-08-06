@@ -21,6 +21,9 @@ interface FillFormRequest {
   data: BenDonFields;
 }
 
+const SLACK_ID_SELECTOR = 'input[id*="e873c5e4-eb8e-4029-8efe-20cb83071f41"], input[name*="e873c5e4-eb8e-4029-8efe-20cb83071f41"]';
+const STAFF_ID_SELECTOR = 'input[id*="d111470c-31c7-4280-89d6-acf60e38f53e"], input[name*="d111470c-31c7-4280-89d6-acf60e38f53e"]';
+
 // Listen for messages from the popup or background script
 browser.runtime.onMessage.addListener((request: unknown, _sender: browser.Runtime.MessageSender) => {
   // Type guard to ensure the request is the one we expect
@@ -56,17 +59,13 @@ browser.runtime.onMessage.addListener((request: unknown, _sender: browser.Runtim
     }
 
     // Slack ID
-    const slackIdInputList = getInputElementList(
-      'input[id*="e873c5e4-eb8e-4029-8efe-20cb83071f41"], input[name*="e873c5e4-eb8e-4029-8efe-20cb83071f41"]'
-    );
+    const slackIdInputList = getInputElementList(SLACK_ID_SELECTOR);
     if (slackId) {
       slackIdInputList.forEach((input) => setReactInputValue(input, slackId));
     }
 
     // Staff ID
-    const staffIdInputList = getInputElementList(
-      'input[id*="d111470c-31c7-4280-89d6-acf60e38f53e"], input[name*="d111470c-31c7-4280-89d6-acf60e38f53e"]'
-    );
+    const staffIdInputList = getInputElementList(STAFF_ID_SELECTOR);
     if (staffId) {
       staffIdInputList.forEach((input) => setReactInputValue(input, staffId));
     }
