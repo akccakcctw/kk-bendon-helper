@@ -10,7 +10,7 @@ import ExtensionReloader from 'webpack-ext-reloader';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import WextManifestWebpackPlugin from 'wext-manifest-webpack-plugin';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
-import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import packageJson from './package.json' with { type: 'json' };
 import { fileURLToPath } from 'url';
 
@@ -186,7 +186,21 @@ export default {
     }),
     // plugin to enable browser reloading in development mode
     extensionReloaderPlugin,
-  ],
+    new FilemanagerPlugin({
+      events: {
+        onEnd: {
+          archive: [
+            {
+              format: 'zip',
+              source: path.join(destPath, targetBrowser),
+              destination: `${path.join(destPath, targetBrowser)}.${getExtensionFileType(targetBrowser)}`,
+              options: {zlib: {level: 6}},
+            },
+          ],
+        },
+      },
+    }),
+  ].filter(Boolean),
 
   optimization: {
     minimize: true,
@@ -200,25 +214,7 @@ export default {
         },
         extractComments: false,
       }),
-      new OptimizeCSSAssetsPlugin({
-        cssProcessorPluginOptions: {
-          preset: ['default', {discardComments: {removeAll: true}}],
-        },
-      }),
-      new FilemanagerPlugin({
-        events: {
-          onEnd: {
-            archive: [
-              {
-                format: 'zip',
-                source: path.join(destPath, targetBrowser),
-                destination: `${path.join(destPath, targetBrowser)}.${getExtensionFileType(targetBrowser)}`,
-                options: {zlib: {level: 6}},
-              },
-            ],
-          },
-        },
-      }),
+      new CssMinimizerPlugin(),
     ],
   },
 };
