@@ -46,6 +46,17 @@ body {
   padding: 24px;
 }
 
+.info-box {
+  background-color: #e7f3ff;
+  border: 1px solid #b3d7ff;
+  color: #004085;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 15px;
+  text-align: center;
+}
+
 .setting-row {
   display: flex;
   justify-content: space-between;

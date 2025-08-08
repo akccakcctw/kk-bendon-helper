@@ -1,10 +1,34 @@
 import { useState, useEffect } from 'react';
 import browser from 'webextension-polyfill';
 
+const ALARM_NAME = 'buyLunchReminder';
+
 const Options = () => {
   const [day, setDay] = useState('3');
   const [time, setTime] = useState('12:00');
   const [status, setStatus] = useState('');
+  const [alarmInfo, setAlarmInfo] = useState('');
+
+  const updateAlarmInfo = async () => {
+    try {
+      const alarm = await browser.alarms.get(ALARM_NAME);
+      if (alarm) {
+        const scheduledDate = new Date(alarm.scheduledTime);
+        const formattedDate = scheduledDate.toLocaleString(undefined, {
+          weekday: 'long',
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: true,
+        });
+        setAlarmInfo(`Next reminder is set for ${formattedDate}.`);
+      } else {
+        setAlarmInfo('No reminder is currently set.');
+      }
+    } catch (error) {
+      console.error("Error fetching alarm:", error);
+      setAlarmInfo('Could not retrieve reminder status.');
+    }
+  };
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -13,7 +37,6 @@ const Options = () => {
           reminderDay: '3',
           reminderTime: '12:00'
         });
-        // Safely cast the retrieved properties to string before setting state
         setDay(items.reminderDay as string);
         setTime(items.reminderTime as string);
       } catch (error) {
@@ -22,6 +45,7 @@ const Options = () => {
     };
 
     loadSettings();
+    updateAlarmInfo();
   }, []);
 
   const handleSave = async () => {
@@ -31,6 +55,8 @@ const Options = () => {
         reminderTime: time
       });
       setStatus('Settings saved!');
+      // Give the background script a moment to process the change and update the alarm
+      setTimeout(updateAlarmInfo, 200);
       setTimeout(() => setStatus(''), 3000);
     } catch (error) {
       console.error("Error saving settings:", error);
@@ -55,6 +81,7 @@ const Options = () => {
             <p>Set the time for your weekly lunch reminder.</p>
           </div>
           <div className="card-body">
+            {alarmInfo && <div className="info-box">{alarmInfo}</div>}
             <div className="setting-row">
               <label htmlFor="day-select" className="setting-label">Day of the week</label>
               <select id="day-select" className="setting-control" value={day} onChange={(e) => setDay(e.target.value)}>

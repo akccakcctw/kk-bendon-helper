@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill';
 import 'emoji-log';
 
-const ALARM_NAME = 'buyLunchReminder';
+export const ALARM_NAME = 'buyLunchReminder';
 
 async function createOrUpdateAlarm() {
   try {
