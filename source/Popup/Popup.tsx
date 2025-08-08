@@ -65,7 +65,7 @@ const Popup = () => {
         <li><span className="text-mono">author: {manifest.author}</span></li>
       </ul>
       <button type="button" className="button" onClick={() => openWebPage('https://kkdayclub.rezio.shop/')}>
-        {t.bendonSystemLink}
+        {t.bendonSystemLink} 🔗
       </button>
       <div className="filed-container">
         <div className="field-set">
