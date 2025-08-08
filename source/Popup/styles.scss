@@ -91,3 +91,43 @@ ul {
     border-color: #0056b3;
   }
 }
+
+.bottom-controls {
+  align-items: center;
+  border-top: 1px solid #e8e8e8;
+  display: flex ;
+  flex-flow: wrap;
+  justify-content: flex-end;
+  padding: 8px 0;
+}
+
+.locale-changer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    font-size: 14px;
+  }
+
+  select {
+    font-size: 14px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+}
+
+.button-link {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  padding: 0;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

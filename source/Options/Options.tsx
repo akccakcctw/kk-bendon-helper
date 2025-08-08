@@ -5,7 +5,6 @@ import { translations, SupportedLocale } from '../lib/translations';
 const ALARM_NAME = 'buyLunchReminder';
 
 const Options = () => {
-  // State for all settings
   const [day, setDay] = useState('3');
   const [time, setTime] = useState('12:00');
   const [locale, setLocale] = useState<SupportedLocale>('en');
@@ -29,28 +28,42 @@ const Options = () => {
     }
   };
 
+  const loadAllSettings = async () => {
+    const settings = await browser.storage.sync.get({
+      reminderDay: '3', reminderTime: '12:00', locale: browser.i18n.getUILanguage(),
+      lastname: '', email: '', slackId: '', staffId: '',
+    });
+    const l = (settings.locale as string).startsWith('zh') ? 'zh-TW' : 'en';
+    setLocale(l);
+    setDay(settings.reminderDay as string);
+    setTime(settings.reminderTime as string);
+    setLastname(settings.lastname as string);
+    setEmail(settings.email as string);
+    setSlackId(settings.slackId as string);
+    setStaffId(settings.staffId as string);
+    await updateAlarmInfo();
+  };
+
   useEffect(() => {
-    const loadSettings = async () => {
-      const settings = await browser.storage.sync.get({
-        reminderDay: '3',
-        reminderTime: '12:00',
-        locale: browser.i18n.getUILanguage(),
-        lastname: '',
-        email: '',
-        slackId: '',
-        staffId: '',
-      });
-      const l = (settings.locale as string).startsWith('zh') ? 'zh-TW' : 'en';
-      setLocale(l);
-      setDay(settings.reminderDay as string);
-      setTime(settings.reminderTime as string);
-      setLastname(settings.lastname as string);
-      setEmail(settings.email as string);
-      setSlackId(settings.slackId as string);
-      setStaffId(settings.staffId as string);
+    loadAllSettings();
+
+    const handleStorageChange = (changes: { [key: string]: browser.Storage.StorageChange }, areaName: string) => {
+      if (areaName === 'sync' && changes.locale) {
+        const newLocale = (changes.locale.newValue as string).startsWith('zh') ? 'zh-TW' : 'en';
+        setLocale(newLocale);
+      }
     };
-    loadSettings().then(updateAlarmInfo);
+
+    browser.storage.onChanged.addListener(handleStorageChange);
+
+    return () => {
+      browser.storage.onChanged.removeListener(handleStorageChange);
+    };
   }, []);
+
+  useEffect(() => {
+    updateAlarmInfo();
+  }, [locale]);
 
   const handleSave = async () => {
     await browser.storage.sync.set({

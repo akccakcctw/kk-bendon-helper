@@ -11,15 +11,11 @@ const Popup = () => {
   const [staffId, setStaffId] = useState('');
   const manifest = browser.runtime.getManifest();
 
-  // Load all settings from storage on component mount
   useEffect(() => {
     const loadSettings = async () => {
       const settings = await browser.storage.sync.get({
         locale: browser.i18n.getUILanguage(),
-        lastname: '',
-        email: '',
-        slackId: '',
-        staffId: '',
+        lastname: '', email: '', slackId: '', staffId: '',
       });
       const l = (settings.locale as string).startsWith('zh') ? 'zh-TW' : 'en';
       setLocale(l);
@@ -29,9 +25,20 @@ const Popup = () => {
       setStaffId(settings.staffId as string);
     };
     loadSettings();
+
+    const handleStorageChange = (changes: { [key: string]: browser.Storage.StorageChange }, areaName: string) => {
+      if (areaName === 'sync') {
+        if (changes.locale) setLocale((changes.locale.newValue as string).startsWith('zh') ? 'zh-TW' : 'en');
+        if (changes.lastname) setLastname(changes.lastname.newValue as string);
+        if (changes.email) setEmail(changes.email.newValue as string);
+        if (changes.slackId) setSlackId(changes.slackId.newValue as string);
+        if (changes.staffId) setStaffId(changes.staffId.newValue as string);
+      }
+    };
+    browser.storage.onChanged.addListener(handleStorageChange);
+    return () => browser.storage.onChanged.removeListener(handleStorageChange);
   }, []);
 
-  // Generic handler to update state and storage
   const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>, key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.currentTarget;
     setter(value);
@@ -41,14 +48,12 @@ const Popup = () => {
   const handleFillForm = async () => {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     if (tab?.id) {
-      browser.tabs.sendMessage(tab.id, {
-        action: 'fill_form',
-        data: { lastname, email, slackId, staffId },
-      }).catch(e => console.error("Error sending message:", e));
+      browser.tabs.sendMessage(tab.id, { action: 'fill_form', data: { lastname, email, slackId, staffId } });
     }
   };
 
   const openWebPage = (url: string) => browser.tabs.create({ url });
+  const openOptionsPage = () => browser.runtime.openOptionsPage();
 
   const t = translations[locale] || translations.en;
 
@@ -80,9 +85,12 @@ const Popup = () => {
           <input onChange={handleInputChange(setStaffId, 'staffId')} value={staffId} type="text" />
         </div>
       </div>
-      <button type="button" className="button button-primary" onClick={handleFillForm}>
-        {t.fillForm} ✨
-      </button>
+
+      <button type="button" className="button button-primary" onClick={handleFillForm}>{t.fillForm} ✨</button>
+
+      <div className="bottom-controls">
+        <button type="button" className="button-link" onClick={openOptionsPage}>{t.goToOptions} →</button>
+      </div>
     </section>
   );
 };
