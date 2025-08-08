@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import browser from 'webextension-polyfill';
 
 const Options = () => {
   const [day, setDay] = useState('3');
@@ -6,54 +7,66 @@ const Options = () => {
   const [status, setStatus] = useState('');
 
   useEffect(() => {
-    chrome.storage.sync.get({
-      reminderDay: '3',
-      reminderTime: '12:00'
-    }, (items: { [key: string]: string }) => {
-      setDay(items.reminderDay);
-      setTime(items.reminderTime);
-    });
+    const loadSettings = async () => {
+      try {
+        const items = await browser.storage.sync.get({
+          reminderDay: '3',
+          reminderTime: '12:00'
+        });
+        // Safely cast the retrieved properties to string before setting state
+        setDay(items.reminderDay as string);
+        setTime(items.reminderTime as string);
+      } catch (error) {
+        console.error("Error loading settings:", error);
+      }
+    };
+
+    loadSettings();
   }, []);
 
-  const handleSave = () => {
-    chrome.storage.sync.set({
-      reminderDay: day,
-      reminderTime: time
-    }, () => {
-      setStatus('設定已儲存！');
+  const handleSave = async () => {
+    try {
+      await browser.storage.sync.set({
+        reminderDay: day,
+        reminderTime: time
+      });
+      setStatus('Settings saved!');
       setTimeout(() => setStatus(''), 3000);
-    });
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      setStatus('Error saving settings.');
+    }
   };
 
   const handleTestNotification = () => {
-    chrome.runtime.sendMessage({ action: 'testNotification' });
+    browser.runtime.sendMessage({ action: 'testNotification' });
   };
 
   return (
     <div className="options-container">
       <header className="options-header">
-        <h1>訂便當小幫手設定</h1>
+        <h1>Bendon Helper Settings</h1>
       </header>
 
       <main>
         <section className="settings-card">
           <div className="card-header">
-            <h2>提醒設定</h2>
-            <p>設定每週接收便當提醒的時間。</p>
+            <h2>Reminder Settings</h2>
+            <p>Set the time for your weekly lunch reminder.</p>
           </div>
           <div className="card-body">
             <div className="setting-row">
-              <label htmlFor="day-select" className="setting-label">每週</label>
+              <label htmlFor="day-select" className="setting-label">Day of the week</label>
               <select id="day-select" className="setting-control" value={day} onChange={(e) => setDay(e.target.value)}>
-                <option value="1">星期一</option>
-                <option value="2">星期二</option>
-                <option value="3">星期三</option>
-                <option value="4">星期四</option>
-                <option value="5">星期五</option>
+                <option value="1">Monday</option>
+                <option value="2">Tuesday</option>
+                <option value="3">Wednesday</option>
+                <option value="4">Thursday</option>
+                <option value="5">Friday</option>
               </select>
             </div>
             <div className="setting-row">
-              <label htmlFor="time-input" className="setting-label">時間</label>
+              <label htmlFor="time-input" className="setting-label">Time</label>
               <input
                 id="time-input"
                 type="time"
@@ -66,25 +79,13 @@ const Options = () => {
           <div className="card-footer">
             {status && <div className="status-message">{status}</div>}
             <button onClick={handleTestNotification} className="btn btn-secondary">
-              測試通知
+              Test Notification
             </button>
             <button onClick={handleSave} className="btn btn-primary">
-              儲存設定
+              Save Settings
             </button>
           </div>
         </section>
-
-        {/* 未來可以輕鬆地在這裡加入新的設定卡片 */}
-        {/*
-        <section className="settings-card">
-          <div className="card-header">
-            <h2>另一個設定</h2>
-          </div>
-          <div className="card-body">
-            ...
-          </div>
-        </section>
-        */}
       </main>
     </div>
   );
