@@ -60,7 +60,7 @@ const Popup = () => {
   return (
     <section id="popup">
       <h2 className="main-title">{t.popupTitle}</h2>
-      <ul>
+      <ul className="align-right">
         <li><span className="text-mono">version: v{manifest.version}</span></li>
         <li><span className="text-mono">author: {manifest.author}</span></li>
       </ul>
