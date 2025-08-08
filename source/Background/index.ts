@@ -36,7 +36,7 @@ async function createOrUpdateAlarm() {
 
     const currentDay = now.getDay();
     const daysUntilTarget = (targetDay - currentDay + 7) % 7;
-    
+
     nextAlarmTime.setDate(now.getDate() + daysUntilTarget);
     nextAlarmTime.setHours(hour, minute, 0, 0);
 
@@ -77,7 +77,6 @@ async function showNotification(isTest = false) {
 
 browser.runtime.onInstalled.addListener(() => {
   console.emoji('🦄', 'Extension installed/updated. Setting initial reminder.');
-  createOrUpdateAlarm();
 });
 
 browser.runtime.onStartup.addListener(() => {
