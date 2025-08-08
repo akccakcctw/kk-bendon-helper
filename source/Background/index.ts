@@ -44,7 +44,7 @@ async function createOrUpdateAlarm() {
       nextAlarmTime.setDate(nextAlarmTime.getDate() + 7);
     }
 
-    await browser.alarms.create(ALARM_NAME, {
+    browser.alarms.create(ALARM_NAME, {
       when: nextAlarmTime.getTime(),
       periodInMinutes: 7 * 24 * 60
     });
