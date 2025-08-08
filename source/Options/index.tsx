@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import Options from './Options';
+import './styles.scss';
 
 const rootElement = document.getElementById('options-root');
 
