@@ -1,149 +1,96 @@
-import * as React from 'react';
-import browser, { type Tabs } from 'webextension-polyfill';
-
+import { useState, useEffect } from 'react';
+import browser from 'webextension-polyfill';
+import { translations, SupportedLocale } from '../lib/translations';
 import './styles.scss';
 
-/**
- * 便當系統的欄位
- */
-interface BenDonFields {
-  lastname: string;
-  email: string;
-  slackId: string;
-  staffId: string;
-}
+const Popup = () => {
+  const [locale, setLocale] = useState<SupportedLocale>('en');
+  const [lastname, setLastname] = useState('');
+  const [email, setEmail] = useState('');
+  const [slackId, setSlackId] = useState('');
+  const [staffId, setStaffId] = useState('');
+  const manifest = browser.runtime.getManifest();
 
-function handleFillFields(fields: BenDonFields): void {
-  browser.tabs.query({ active: true, currentWindow: true }).then((tabs) => {
-    const activeTab = tabs[0];
-    if (activeTab?.id) {
-      browser.tabs.sendMessage(activeTab.id, {
-        action: 'fill_form',
-        data: fields,
-      }).then(response => {
-        console.log('Response from content script:', response);
-      }).catch(error => {
-        console.error('Error sending message to content script:', error);
-        // This can happen if the content script is not yet injected.
-        // You might want to alert the user or implement a retry mechanism.
-        alert('Could not connect to the content script. Please refresh the page and try again.');
+  useEffect(() => {
+    const loadSettings = async () => {
+      const settings = await browser.storage.sync.get({
+        locale: browser.i18n.getUILanguage(),
+        lastname: '', email: '', slackId: '', staffId: '',
       });
-    }
-  });
-}
+      const l = (settings.locale as string).startsWith('zh') ? 'zh-TW' : 'en';
+      setLocale(l);
+      setLastname(settings.lastname as string);
+      setEmail(settings.email as string);
+      setSlackId(settings.slackId as string);
+      setStaffId(settings.staffId as string);
+    };
+    loadSettings();
 
-function openWebPage(url: string): Promise<Tabs.Tab> {
-  return browser.tabs.create({ url });
-}
-
-const Popup: React.FC = () => {
-  const [lastname, setLastname] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [slackId, setSlackId] = React.useState('');
-  const [staffId, setStaffId] = React.useState('');
-
-  React.useEffect(() => {
-    (async function getCache(): Promise<void> {
-      const lastnameCache = await browser.storage.local.get('lastname') as { lastname: string };
-      const emailCache = await browser.storage.local.get('email') as { email: string };
-      const slackIdCache = await browser.storage.local.get('slackId') as { slackId: string };
-      const staffIdCache = await browser.storage.local.get('staffId') as { staffId: string };
-
-      if (lastnameCache) setLastname(lastnameCache.lastname);
-      if (emailCache) setEmail(emailCache.email);
-      if (slackIdCache) setSlackId(slackIdCache.slackId);
-      if (staffIdCache) setStaffId(staffIdCache.staffId);
-    })();
+    const handleStorageChange = (changes: { [key: string]: browser.Storage.StorageChange }, areaName: string) => {
+      if (areaName === 'sync') {
+        if (changes.locale) setLocale((changes.locale.newValue as string).startsWith('zh') ? 'zh-TW' : 'en');
+        if (changes.lastname) setLastname(changes.lastname.newValue as string);
+        if (changes.email) setEmail(changes.email.newValue as string);
+        if (changes.slackId) setSlackId(changes.slackId.newValue as string);
+        if (changes.staffId) setStaffId(changes.staffId.newValue as string);
+      }
+    };
+    browser.storage.onChanged.addListener(handleStorageChange);
+    return () => browser.storage.onChanged.removeListener(handleStorageChange);
   }, []);
+
+  const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>, key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.currentTarget;
+    setter(value);
+    browser.storage.sync.set({ [key]: value });
+  };
+
+  const handleFillForm = async () => {
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    if (tab?.id) {
+      browser.tabs.sendMessage(tab.id, { action: 'fill_form', data: { lastname, email, slackId, staffId } });
+    }
+  };
+
+  const openWebPage = (url: string) => browser.tabs.create({ url });
+  const openOptionsPage = () => browser.runtime.openOptionsPage();
+
+  const t = translations[locale] || translations.en;
 
   return (
     <section id="popup">
-      <h2 className="main-title">訂便當小幫手</h2>
-      <ul>
-        <li>
-          <span className="text-mono">version: v{process.env.VERSION}</span>
-        </li>
-        <li>
-          <span className="text-mono">author: {process.env.AUTHOR}</span>
-        </li>
+      <h2 className="main-title">{t.popupTitle}</h2>
+      <ul className="align-right">
+        <li><span className="text-mono">version: v{manifest.version}</span></li>
+        <li><span className="text-mono">author: {manifest.author}</span></li>
       </ul>
-      <button
-        type="button"
-        className="button"
-        onClick={(): Promise<Tabs.Tab> => {
-          return openWebPage('https://kkdayclub.rezio.shop/');
-        }}
-      >
-        便當系統 🔗
+      <button type="button" className="button" onClick={() => openWebPage('https://kkdayclub.rezio.shop/')}>
+        {t.bendonSystemLink} 🔗
       </button>
       <div className="filed-container">
         <div className="field-set">
-          <label>Lastname</label>
-          <input
-            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-              const val = e.currentTarget.value;
-              setLastname(val);
-              browser.storage.local.set({ lastname: val });
-            }}
-            value={lastname}
-            name="lastname"
-            type="text"
-          />
+          <label>{t.lastNameLabel}</label>
+          <input onChange={handleInputChange(setLastname, 'lastname')} value={lastname} type="text" />
         </div>
         <div className="field-set">
-          <label>Email</label>
-          <input
-            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-              const text = e.currentTarget.value;
-              setEmail(text);
-              browser.storage.local.set({ email: text });
-            }}
-            value={email}
-            name="email"
-            type="email"
-          />
+          <label>{t.emailLabel}</label>
+          <input onChange={handleInputChange(setEmail, 'email')} value={email} type="email" />
         </div>
         <div className="field-set">
-          <label>Slack ID</label>
-          <input
-            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-              const val = e.currentTarget.value;
-              setSlackId(val);
-              browser.storage.local.set({ slackId: val });
-            }}
-            value={slackId}
-            name="slack-id"
-            type="text"
-          />
+          <label>{t.slackIdLabel}</label>
+          <input onChange={handleInputChange(setSlackId, 'slackId')} value={slackId} type="text" />
         </div>
         <div className="field-set">
-          <label>Staff ID</label>
-          <input
-            onChange={(e: React.ChangeEvent<HTMLInputElement>): void => {
-              const val = e.currentTarget.value;
-              setStaffId(val);
-              browser.storage.local.set({ staffId: val });
-            }}
-            value={staffId}
-            name="staff-id"
-            type="text"
-          />
+          <label>{t.staffIdLabel}</label>
+          <input onChange={handleInputChange(setStaffId, 'staffId')} value={staffId} type="text" />
         </div>
       </div>
-      <button
-        type="button"
-        className="button"
-        onClick={(): void => {
-          return handleFillFields({
-            lastname,
-            email,
-            slackId,
-            staffId,
-          });
-        }}
-      >
-        填入所有欄位 ✨
-      </button>
+
+      <button type="button" className="button button-primary" onClick={handleFillForm}>{t.fillForm} ✨</button>
+
+      <div className="bottom-controls">
+        <button type="button" className="button-link" onClick={openOptionsPage}>{t.goToOptions} →</button>
+      </div>
     </section>
   );
 };
