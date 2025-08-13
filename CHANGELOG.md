@@ -1,3 +1,22 @@
+## [2.1.0](https://github.com/akccakcctw/kk-bendon-helper/compare/v2.0.4...v2.1.0) (2025-08-13)
+
+
+### Features
+
+* bendonSystemLink 加上 emoji ([e573be0](https://github.com/akccakcctw/kk-bendon-helper/commit/e573be0e2b4dcdc960ae132ac652c7d054742553))
+* info 區塊靠右 ([7d82167](https://github.com/akccakcctw/kk-bendon-helper/commit/7d82167bd1151370e1996316022360f0554c5677))
+* 優化 Popup 介面 ([2cef506](https://github.com/akccakcctw/kk-bendon-helper/commit/2cef5066ebc355f4198082bc808501340da7d4e2))
+* 多語系功能 ([3a5adf7](https://github.com/akccakcctw/kk-bendon-helper/commit/3a5adf7c741b77e8634981d265015d0ac5f047d7))
+* 安裝完成時，不自動設定提醒 ([8d260e7](https://github.com/akccakcctw/kk-bendon-helper/commit/8d260e7b5830f4cf55ad85c8b32f055c80c73bf1))
+* 提醒功能 ([1803cba](https://github.com/akccakcctw/kk-bendon-helper/commit/1803cba7eedf79b70985fcb4f2c88cab1bc0298b))
+* 調整 Popup 頁面版面 ([b1c957a](https://github.com/akccakcctw/kk-bendon-helper/commit/b1c957ae2537023f734d4b41ff94d6f7ab46ef69))
+* 顯示下一個提醒設定的時間 ([40d1b35](https://github.com/akccakcctw/kk-bendon-helper/commit/40d1b353965074cceb6e5240864be0dc332b7386))
+
+
+### Bug Fixes
+
+* 移除多餘的 await ([47cfa68](https://github.com/akccakcctw/kk-bendon-helper/commit/47cfa68ab0772f7aae4fecc3a86b4837d805abd9))
+
 ## [2.0.4](https://github.com/akccakcctw/kk-bendon-helper/compare/v2.0.3...v2.0.4) (2025-08-06)
 
 
