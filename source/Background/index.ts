@@ -98,8 +98,18 @@ browser.alarms.onAlarm.addListener((alarm) => {
   }
 });
 
-browser.runtime.onMessage.addListener((request: any) => {
-  if (request && request.action === 'testNotification') {
+
+function isTestNotificationMessage(message: unknown): message is { action: 'testNotification' } {
+  return (
+    typeof message === 'object' &&
+    message !== null &&
+    'action' in message &&
+    (message as { action?: unknown }).action === 'testNotification'
+  );
+}
+
+browser.runtime.onMessage.addListener((message: unknown) => {
+  if (isTestNotificationMessage(message)) {
     console.log('Test notification request received.');
     showNotification(true);
   }
